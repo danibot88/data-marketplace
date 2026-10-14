@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR" class="h-full bg-slate-50">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Datasul — dados confiáveis, prontos para análise.">
+  <title>{% block title %}Datasul — marketplace de dados{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <style>
+    :root { --ink: #0f172a; --navy: #101b2d; --orange: #ffb000; }
+    body { font-family: Inter, system-ui, sans-serif; color: var(--ink); }
+    [x-cloak] { display: none !important; }
+    .hide-scrollbar { scrollbar-width: none; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .prose-data h2,.prose-data h3 { font-weight: 800; margin: 1.3rem 0 .6rem; }
+    .prose-data p,.prose-data ul,.prose-data ol { margin: .7rem 0; color: #475569; }
+    .prose-data ul,.prose-data ol { padding-left: 1.3rem; }
+    .prose-data ul { list-style: disc; } .prose-data ol { list-style: decimal; }
+  </style>
+</head>
+<body class="min-h-full flex flex-col">
+  <header class="bg-[#101b2d] text-white shadow-lg" x-data="{ mobile: false }">
+    <div class="mx-auto flex max-w-[1500px] items-center gap-4 px-4 py-3">
+      <a href="{% url 'marketplace:home' %}" class="shrink-0 text-2xl font-black tracking-tight">data<span class="text-amber-400">sul</span><span class="text-xs font-medium text-slate-300">.market</span></a>
+      <form action="{% url 'marketplace:dataset_list' %}" class="hidden min-w-0 flex-1 md:flex" role="search">
+        <label for="global-search" class="sr-only">Pesquisar datasets</label>
+        <select name="category" aria-label="Categoria" class="rounded-l-md border-0 bg-slate-100 px-3 text-sm text-slate-700 focus:ring-2 focus:ring-amber-400">
+          <option value="">Todos</option>
+          {% for category in navigation_categories %}<option value="{{ category.slug }}">{{ category.name }}</option>{% endfor %}
+        </select>
+        <input id="global-search" name="q" placeholder="Pesquisar dados, temas e setores" class="min-w-0 flex-1 border-0 px-4 py-2.5 text-slate-900 focus:ring-2 focus:ring-amber-400">
+        <button class="rounded-r-md bg-amber-400 px-5 text-slate-900 hover:bg-amber-300" aria-label="Pesquisar">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-width="2" d="m21 21-4.4-4.4m2.4-5.1a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z"/></svg>
+        </button>
+      </form>
+      <nav class="ml-auto flex items-center gap-4 text-sm">
+        {% if user.is_authenticated %}
+          <a href="{% url 'marketplace:dashboard' %}" class="hidden leading-tight hover:text-amber-300 sm:block"><span class="text-xs text-slate-300">Olá, {{ user.username }}</span><br><strong>Meus Dados</strong></a>
+          <form action="{% url 'logout' %}" method="post">{% csrf_token %}<button class="font-semibold hover:text-amber-300">Sair</button></form>
+        {% else %}
+          <a href="{% url 'login' %}" class="leading-tight hover:text-amber-300"><span class="text-xs text-slate-300">Olá, faça seu login</span><br><strong>Conta e acesso</strong></a>
+        {% endif %}
+        <button @click="mobile = !mobile" class="md:hidden" aria-label="Abrir menu">☰</button>
+      </nav>
+    </div>
+    <div class="border-t border-slate-700 bg-[#18263a]">
+      <nav class="mx-auto flex max-w-[1500px] gap-6 overflow-x-auto px-4 py-2.5 text-sm font-semibold hide-scrollbar">
+        <a href="{% url 'marketplace:dataset_list' %}" class="whitespace-nowrap hover:text-amber-300">☰ Todos os datasets</a>
+        {% for category in navigation_categories %}<a href="{% url 'marketplace:dataset_list' %}?category={{ category.slug }}" class="whitespace-nowrap hover:text-amber-300">{{ category.name }}</a>{% endfor %}
+      </nav>
+    </div>
+    <form x-show="mobile" x-cloak action="{% url 'marketplace:dataset_list' %}" class="flex gap-2 border-t border-slate-700 p-3 md:hidden">
+      <input name="q" placeholder="Pesquisar datasets" class="min-w-0 flex-1 rounded px-3 py-2 text-slate-900">
+      <button class="rounded bg-amber-400 px-4 text-slate-900">Buscar</button>
+    </form>
+  </header>
+
+  {% if messages %}<div class="mx-auto w-full max-w-7xl px-4 pt-4">{% for message in messages %}<div class="mb-2 rounded-lg border px-4 py-3 text-sm {% if message.tags == 'error' %}border-red-200 bg-red-50 text-red-800{% else %}border-emerald-200 bg-emerald-50 text-emerald-800{% endif %}">{{ message }}</div>{% endfor %}</div>{% endif %}
+  <main class="flex-1">{% block content %}{% endblock %}</main>
+  <footer class="mt-16 bg-[#101b2d] text-slate-300">
+    <div class="mx-auto grid max-w-7xl gap-8 px-4 py-10 md:grid-cols-3">
+      <div><div class="text-xl font-black text-white">data<span class="text-amber-400">sul</span></div><p class="mt-3 text-sm">Dados confiáveis, documentados e prontos para análise.</p></div>
+      <div><h2 class="font-bold text-white">Marketplace</h2><a class="mt-3 block text-sm hover:text-white" href="{% url 'marketplace:dataset_list' %}">Explorar datasets</a><a class="mt-2 block text-sm hover:text-white" href="{% url 'marketplace:dashboard' %}">Meus Dados</a></div>
+      <div><h2 class="font-bold text-white">Segurança</h2><p class="mt-3 text-sm">Pagamentos rastreáveis e arquivos entregues por rotas privadas.</p></div>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<article class="group min-w-[220px] flex-1 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+  <a href="{{ dataset.get_absolute_url }}" class="block">
+    <div class="flex h-36 items-end bg-gradient-to-br {% cycle 'from-blue-950 to-cyan-600' 'from-indigo-950 to-violet-600' 'from-emerald-950 to-teal-500' 'from-rose-950 to-orange-500' %} p-4 text-white">
+      <div><span class="rounded bg-white/15 px-2 py-1 text-[11px] font-bold uppercase backdrop-blur">{{ dataset.file_format }}</span><p class="mt-3 text-xs text-white/75">{{ dataset.category.name }}</p></div>
+    </div>
+    <div class="p-4">
+      <h3 class="line-clamp-2 min-h-12 font-bold leading-snug text-slate-900 group-hover:text-blue-700">{{ dataset.title }}</h3>
+      <p class="mt-2 line-clamp-2 min-h-10 text-xs leading-relaxed text-slate-500">{{ dataset.short_description|default:dataset.description|truncatewords:15 }}</p>
+      <div class="mt-3 flex items-end justify-between gap-2">
+        <div><span class="text-xs text-slate-500">Acesso permanente</span><div><span class="text-xs">{{ dataset.currency }}</span> <strong class="text-xl">{{ dataset.price }}</strong></div></div>
+        <span class="rounded-full bg-blue-50 px-2 py-1 text-[11px] font-bold text-blue-700">{{ dataset.row_count }} linhas</span>
+      </div>
+    </div>
+  </a>
+</article>

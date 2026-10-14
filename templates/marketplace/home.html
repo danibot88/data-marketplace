@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="mx-auto max-w-[1500px] px-4 pt-5">
+  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-950 via-blue-800 to-cyan-600 px-7 py-10 text-white shadow-lg md:px-16 md:py-14">
+    <div class="relative z-10 max-w-2xl"><span class="rounded-full bg-amber-400 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-slate-900">Catálogo profissional</span><h1 class="mt-4 text-3xl font-black leading-tight md:text-5xl">Dados que encurtam o caminho entre pergunta e decisão.</h1><p class="mt-4 max-w-xl text-sm text-blue-100 md:text-base">Bases documentadas, amostras exploráveis e download seguro em uma única compra.</p><a href="{% url 'marketplace:dataset_list' %}" class="mt-7 inline-flex rounded-full bg-white px-6 py-3 font-extrabold text-blue-950 hover:bg-amber-300">Explorar catálogo</a></div>
+    <div class="absolute -right-20 -top-28 h-96 w-96 rounded-full border-[70px] border-white/10"></div><div class="absolute bottom-5 right-16 hidden grid-cols-3 gap-2 opacity-70 md:grid">{% for i in '123456789' %}<span class="h-8 w-8 rounded bg-white/20"></span>{% endfor %}</div>
+  </div>
+</section>
+
+<section class="mx-auto max-w-[1500px] px-4 py-10">
+  <div class="text-center"><p class="text-sm font-bold uppercase tracking-widest text-blue-700">Encontre seu próximo insight</p><h2 class="mt-1 text-3xl font-black">Explorar categorias</h2></div>
+  <div class="mt-7 flex gap-3 overflow-x-auto pb-3 hide-scrollbar">{% for category in categories %}<a href="{% url 'marketplace:dataset_list' %}?category={{ category.slug }}" class="whitespace-nowrap rounded-full border border-slate-300 bg-white px-5 py-3 text-sm font-bold shadow-sm hover:border-blue-600 hover:text-blue-700">{{ category.name }}</a>{% empty %}<span class="text-slate-500">As categorias aparecerão aqui.</span>{% endfor %}</div>
+</section>
+
+{% if featured %}<section class="mx-auto max-w-[1500px] px-4 pb-10"><div class="flex items-end justify-between"><div><p class="text-sm font-bold text-blue-700">Seleção editorial</p><h2 class="text-2xl font-black">Datasets em destaque</h2></div><a href="{% url 'marketplace:dataset_list' %}" class="text-sm font-bold text-blue-700 hover:underline">Ver todos →</a></div><div class="mt-5 flex gap-4 overflow-x-auto pb-5 hide-scrollbar">{% for dataset in featured %}{% include "marketplace/partials/dataset_card.html" %}{% endfor %}</div></section>{% endif %}
+
+<section class="mx-auto max-w-[1500px] px-4 pb-8"><div class="flex items-end justify-between"><div><p class="text-sm font-bold text-blue-700">Atualizações recentes</p><h2 class="text-2xl font-black">Novos no catálogo</h2></div><a href="{% url 'marketplace:dataset_list' %}" class="text-sm font-bold text-blue-700 hover:underline">Ver catálogo →</a></div><div class="mt-5 flex gap-4 overflow-x-auto pb-5 hide-scrollbar">{% for dataset in latest %}{% include "marketplace/partials/dataset_card.html" %}{% empty %}<div class="w-full rounded-xl border border-dashed border-slate-300 p-10 text-center text-slate-500">Cadastre datasets pelo painel administrativo para preencher esta vitrine.</div>{% endfor %}</div></section>
+
+<section class="bg-white"><div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 md:grid-cols-3">{% for item in '123' %}<div class="flex gap-4"><div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-100 font-black text-blue-700">{{ forloop.counter }}</div><div><h3 class="font-extrabold">{% cycle 'Explore antes de comprar' 'Pagamento único' 'Download protegido' %}</h3><p class="mt-1 text-sm text-slate-500">{% cycle 'Amostras, esquema e gráficos ajudam a validar a escolha.' 'Sem assinatura: adquira apenas o dado de que precisa.' 'Arquivos privados e acesso vinculado à sua conta.' %}</p></div></div>{% endfor %}</div></section>
+{% endblock %}
